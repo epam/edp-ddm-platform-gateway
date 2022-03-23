@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-gateway-properties
+data:
+  config.yaml: |-
+    server.max-http-header-size: 32KB
+    spring:
+      cloud:
+        gateway:
+          routes:
+            - id: data-factory
+              uri: http://no-op
+              predicates:
+                - Path=/data-factory/{registry}/**
+                - Method=GET
+              filters:
+                - name: SetAccessToken
+                  args:
+                    header: X-Access-Token
+                - name: KubernetesUrlMapping
+                  args:
+                    serviceUrlPattern: {{ .Values.restApi.root.urlPattern }}
+                - StripPrefix=2
+            - id: bp-gateway
+              uri: http://no-op
+              predicates:
+                - Path=/bp-gateway/{registry}/**
+                - Method=POST
+              filters:
+                - name: SetAccessToken
+                  args:
+                    header: X-Access-Token
+                - name: KubernetesUrlMapping
+                  args:
+                    serviceUrlPattern: {{ .Values.bpGateway.root.urlPattern }}
+                - StripPrefix=2
+
+    vault:
+      uri: https://hashicorp-vault-user-management.{{ .Values.dnsWildcard }}
+
+    registry:
+      name: {{ .Values.namespace }}
