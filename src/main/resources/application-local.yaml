@@ -1,0 +1,48 @@
+server:
+  port: 8092
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: data-factory
+          uri: http://localhost:8080
+          predicates:
+            - Path=/data-factory/{registry}/**
+            - Method=GET
+          filters:
+            - name: SetAccessToken
+              args:
+                header: X-Access-Token
+            - StripPrefix=2
+        - id: bp-gateway
+          uri: http://localhost:8081
+          predicates:
+            - Path=/bp-gateway/{registry}/**
+            - Method=POST
+          filters:
+            - name: SetAccessToken
+              args:
+                header: X-Access-Token
+            - StripPrefix=2
+        - id: basicAuthRoute
+          uri: http://localhost:8082
+          predicates:
+            - Path=/external/basicAuth/**
+          filters:
+            - name: BasicAuth
+              args:
+                username: username
+                password: password
+            - StripPrefix=2
+
+vault:
+  uri: http://localhost:8200
+  token: myroot
+
+registry:
+  name: labs
+
+logging:
+  level:
+    org.zalando.logbook: TRACE
