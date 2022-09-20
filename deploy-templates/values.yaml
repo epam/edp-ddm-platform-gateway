@@ -3,6 +3,7 @@ global:
 
 name: platform-gateway
 
+deployProfile: prod
 
 version: 1.1.0
 
