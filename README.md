@@ -21,4 +21,6 @@ Request to platform gateway GET http://host/registry-target/endpoint with be map
 Application starts by default on port 8092
 
 ### License
-platform-gateway is Open Source software released under the Apache 2.0 license.
+
+The platform-gateway is Open Source software released under
+the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
