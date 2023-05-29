@@ -50,4 +50,13 @@
 {{- printf "%s-%s%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.admin .Values.keycloak.certificatesEndpoint -}}
 {{- end -}}
 
+{{- define "horizontalPodAutoscaler.apiVersion" }}
+{{- if eq .Values.global.clusterVersion "4.9.0" }}
+{{- printf "%s" "autoscaling/v2beta2" }}
+{{- else }}
+{{- printf "%s" "autoscaling/v2" }}
+{{- end }}
+{{- end }}
+
+
 
