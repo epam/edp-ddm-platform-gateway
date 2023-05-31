@@ -11,7 +11,7 @@ spring:
             - Path=/data-factory/{registry}/**
             - Method=GET
           filters:
-            - name: SetAccessToken
+            - name: ClientRegistrySetToken
               args:
                 header: X-Access-Token
             - StripPrefix=2
@@ -21,7 +21,7 @@ spring:
             - Path=/bp-gateway/{registry}/**
             - Method=POST
           filters:
-            - name: SetAccessToken
+            - name: ClientRegistrySetToken
               args:
                 header: X-Access-Token
             - StripPrefix=2
@@ -35,6 +35,23 @@ spring:
                 username: username
                 password: password
             - StripPrefix=2
+        - id: public-api
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/public/data-factory/**
+            - Method=GET
+          filters:
+            - name: PublicApiAddToken
+              args:
+                header: X-Access-Token
+            - StripPrefix=3
+
+keycloak:
+  url: http://localhost:8083
+  public-api:
+    realm: realm
+    client-id: client-id
+    client-secret: client-secret
 
 vault:
   uri: http://localhost:8200

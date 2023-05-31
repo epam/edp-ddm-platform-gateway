@@ -20,12 +20,12 @@ data:
                 - Path=/data-factory/{registry}/**
                 - Method=GET
               filters:
-                - name: SetAccessToken
+                - name: ClientRegistrySetToken
                   args:
                     header: X-Access-Token
                 - name: KubernetesUrlMapping
                   args:
-                    serviceUrlPattern: {{ .Values.restApi.root.urlPattern }}
+                    serviceUrlPattern: {{ .Values.restApi.externalRegistry.root.urlPattern }}
                 - StripPrefix=2
             - id: bp-gateway
               uri: http://no-op
@@ -33,16 +33,32 @@ data:
                 - Path=/bp-gateway/{registry}/**
                 - Method=POST
               filters:
-                - name: SetAccessToken
+                - name: ClientRegistrySetToken
                   args:
                     header: X-Access-Token
                 - name: KubernetesUrlMapping
                   args:
                     serviceUrlPattern: {{ .Values.bpGateway.root.urlPattern }}
                 - StripPrefix=2
+            - id: public-api
+              uri: {{ .Values.restApi.public.root.urlPattern }}
+              predicates:
+                - Path=/api/public/data-factory/**
+                - Method=GET
+              filters:
+                - name: PublicApiAddToken
+                  args:
+                    header: X-Access-Token
+                - StripPrefix=3    
 
     vault:
       uri: https://hashicorp-vault-user-management.{{ .Values.dnsWildcard }}
 
     registry:
       name: {{ .Values.namespace }}
+    
+    keycloak:
+      url: {{ template "keycloak.url" . }}
+      public-api:
+        realm: {{ .Values.namespace }}-{{ .Values.keycloak.realms.externalSystem }}
+        client-id: {{ .Values.keycloak.publicApiClient.clientName }}

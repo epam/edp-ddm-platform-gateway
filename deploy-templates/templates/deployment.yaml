@@ -64,6 +64,9 @@ spec:
               name: config
               readOnly: true
               subPath: config.yaml
+            - name: {{ .Values.keycloak.publicApiClient.secretName }}
+              mountPath: /app/secrets/public-api-client
+              readOnly: true
             - mountPath: /app/secrets/vaulttoken
               name: {{ .Chart.Name }}-gateway-vault-token
               readOnly: true
@@ -80,6 +83,12 @@ spec:
         - name: config
           configMap:
             name: platform-gateway-properties
+        - name: {{ .Values.keycloak.publicApiClient.secretName }}
+          secret:
+            secretName: {{ .Values.keycloak.publicApiClient.secretName }}
+            items:
+              - key: clientSecret
+                path: keycloak.public-api.client-secret
         - name: {{ .Chart.Name }}-gateway-vault-token
           secret:
             secretName: {{ .Values.vault.tokenSecret }}

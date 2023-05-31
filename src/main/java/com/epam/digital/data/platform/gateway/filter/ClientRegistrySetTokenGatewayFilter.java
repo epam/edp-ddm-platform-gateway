@@ -33,23 +33,23 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.epam.digital.data.platform.gateway.filter.factory.SetAccessTokenGatewayFilterFactory.TokenConfig;
+import com.epam.digital.data.platform.gateway.filter.factory.model.TokenConfig;
 import static com.epam.digital.data.platform.gateway.util.GatewayConstants.REGISTRY_NAME_URL_PATH_VARIABLE;
 import static org.springframework.vault.core.VaultKeyValueOperationsSupport.KeyValueBackend;
 
-public class SetAccessTokenGatewayFilter implements GatewayFilter {
+public class ClientRegistrySetTokenGatewayFilter implements GatewayFilter {
 
   private static final String VAULT_PATTERN = "%s/%s";
   protected static final String VAULT_PREFIX = "platform-integration";
 
-  private final Logger log = LoggerFactory.getLogger(SetAccessTokenGatewayFilter.class);
+  private final Logger log = LoggerFactory.getLogger(ClientRegistrySetTokenGatewayFilter.class);
 
   private final String clientRegistry;
   private final TokenConfig config;
   private final VaultTemplate vaultTemplate;
   private final TokenManagerFactory tokenManagerFactory;
 
-  public SetAccessTokenGatewayFilter(
+  public ClientRegistrySetTokenGatewayFilter(
       String clientRegistry,
       TokenConfig config,
       VaultTemplate vaultTemplate,

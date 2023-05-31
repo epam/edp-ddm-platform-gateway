@@ -16,6 +16,7 @@ spring:
         enabled: true
         paths:
           - /app/secrets/vaulttoken
+          - /app/secrets/public-api-client
         enable-api: false
 ---
 spring:

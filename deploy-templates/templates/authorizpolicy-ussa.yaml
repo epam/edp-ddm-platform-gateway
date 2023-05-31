@@ -16,4 +16,5 @@ spec:
         - operation:
             notPaths:
               - /actuator*
+              - /api/public/data-factory/*
   action: DENY

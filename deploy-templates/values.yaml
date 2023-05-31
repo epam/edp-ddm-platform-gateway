@@ -36,8 +36,12 @@ probes:
 
 
 restApi:
-  root:
-    urlPattern: http://registry-rest-api-ext.{registry}.svc.cluster.local:8080
+  externalRegistry:
+    root:
+      urlPattern: http://registry-rest-api-ext.{registry}.svc.cluster.local:8080
+  public:
+    root:
+      urlPattern: http://registry-rest-api-public:8080
 bpGateway:
   root:
     urlPattern: http://bp-webservice-gateway.{registry}.svc.cluster.local:8080
@@ -51,7 +55,11 @@ keycloak:
     officer: officer-portal
     citizen: citizen-portal
     admin: admin
+    externalSystem: external-system
   certificatesEndpoint: /protocol/openid-connect/certs
+  publicApiClient:
+    clientName: public-user
+    secretName: keycloak-public-user-client-secret
 
 
 ############## EDP VARIABLES TEST VALUES ##############################

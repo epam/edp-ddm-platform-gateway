@@ -18,6 +18,7 @@ package com.epam.digital.data.platform.gateway.filter;
 
 import com.epam.digital.data.platform.gateway.exception.KeycloakCommunicationException;
 import com.epam.digital.data.platform.gateway.exception.VaultDataRetrievingException;
+import com.epam.digital.data.platform.gateway.filter.factory.model.TokenConfig;
 import com.epam.digital.data.platform.gateway.model.KeycloakAuthRequestInfo;
 import com.epam.digital.data.platform.gateway.service.TokenManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +41,7 @@ import org.springframework.web.server.ServerWebExchange;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.epam.digital.data.platform.gateway.filter.SetAccessTokenGatewayFilter.VAULT_PREFIX;
-import static com.epam.digital.data.platform.gateway.filter.factory.SetAccessTokenGatewayFilterFactory.*;
+import static com.epam.digital.data.platform.gateway.filter.ClientRegistrySetTokenGatewayFilter.VAULT_PREFIX;
 import static com.epam.digital.data.platform.gateway.util.GatewayConstants.REGISTRY_NAME_URL_PATH_VARIABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.vault.core.VaultKeyValueOperationsSupport.*;
 
 @ExtendWith(MockitoExtension.class)
-class SetAccessTokenGatewayFilterTest {
+class ClientRegistrySetTokenGatewayFilterTest {
 
   private static final String CLIENT_REGISTRY = "client";
   private static final String TARGET_REGISTRY = "target";
@@ -69,14 +69,14 @@ class SetAccessTokenGatewayFilterTest {
   @Mock
   private TokenManager tokenManager;
 
-  private SetAccessTokenGatewayFilter setAccessTokenGatewayFilter;
+  private ClientRegistrySetTokenGatewayFilter clientRegistrySetTokenGatewayFilter;
 
   @BeforeEach
   void beforeEach() {
     var tokenConfig = new TokenConfig();
     tokenConfig.setHeader(TOKEN_HEADER);
 
-    setAccessTokenGatewayFilter = new SetAccessTokenGatewayFilter(CLIENT_REGISTRY, tokenConfig, vaultTemplate, tokenManagerFactory);
+    clientRegistrySetTokenGatewayFilter = new ClientRegistrySetTokenGatewayFilter(CLIENT_REGISTRY, tokenConfig, vaultTemplate, tokenManagerFactory);
 
     when(vaultTemplate.opsForKeyValue(VAULT_PREFIX, KeyValueBackend.KV_2))
             .thenReturn(vaultKeyValueOperations);
@@ -95,7 +95,7 @@ class SetAccessTokenGatewayFilterTest {
 
     var exchange = mockExchange();
 
-    setAccessTokenGatewayFilter.filter(exchange, gatewayFilterChain);
+    clientRegistrySetTokenGatewayFilter.filter(exchange, gatewayFilterChain);
 
     assertThat(exchange.getRequest().getHeaders())
             .containsEntry(TOKEN_HEADER, Collections.singletonList(TOKEN_VALUE));
@@ -113,7 +113,7 @@ class SetAccessTokenGatewayFilterTest {
     var actualEx =
         assertThrows(
             VaultDataRetrievingException.class,
-            () -> setAccessTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
+            () -> clientRegistrySetTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
 
     assertThat(actualEx.getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -129,7 +129,7 @@ class SetAccessTokenGatewayFilterTest {
     var actualEx =
         assertThrows(
             VaultDataRetrievingException.class,
-            () -> setAccessTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
+            () -> clientRegistrySetTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
 
     assertThat(actualEx.getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -150,7 +150,7 @@ class SetAccessTokenGatewayFilterTest {
     var actualEx =
         assertThrows(
             KeycloakCommunicationException.class,
-            () -> setAccessTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
+            () -> clientRegistrySetTokenGatewayFilter.filter(exchange, gatewayFilterChain).block());
 
     assertThat(actualEx.getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
   }

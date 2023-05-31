@@ -16,7 +16,8 @@
 
 package com.epam.digital.data.platform.gateway.filter.factory;
 
-import com.epam.digital.data.platform.gateway.filter.SetAccessTokenGatewayFilter;
+import com.epam.digital.data.platform.gateway.filter.ClientRegistrySetTokenGatewayFilter;
+import com.epam.digital.data.platform.gateway.filter.factory.model.TokenConfig;
 import com.epam.digital.data.platform.gateway.service.TokenManagerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -24,17 +25,15 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.stereotype.Component;
 import org.springframework.vault.core.VaultTemplate;
 
-import static com.epam.digital.data.platform.gateway.filter.factory.SetAccessTokenGatewayFilterFactory.*;
-
 @Component
-public class SetAccessTokenGatewayFilterFactory
+public class ClientRegistrySetTokenGatewayFilterFactory
         extends AbstractGatewayFilterFactory<TokenConfig> {
 
   private final String clientRegistry;
   private final VaultTemplate vaultTemplate;
   private final TokenManagerFactory tokenManagerFactory;
 
-  public SetAccessTokenGatewayFilterFactory(
+  public ClientRegistrySetTokenGatewayFilterFactory(
       @Value("${registry.name}") String clientRegistry,
       VaultTemplate vaultTemplate,
       TokenManagerFactory tokenManagerFactory) {
@@ -46,19 +45,7 @@ public class SetAccessTokenGatewayFilterFactory
 
   @Override
   public GatewayFilter apply(TokenConfig config) {
-    return new SetAccessTokenGatewayFilter(
+    return new ClientRegistrySetTokenGatewayFilter(
         clientRegistry, config, vaultTemplate, tokenManagerFactory);
-  }
-
-  public static class TokenConfig {
-    private String header;
-
-    public String getHeader() {
-      return header;
-    }
-
-    public void setHeader(String header) {
-      this.header = header;
-    }
   }
 }
