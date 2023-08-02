@@ -9,7 +9,7 @@ spring:
           uri: http://localhost:8080
           predicates:
             - Path=/data-factory/{registry}/**
-            - Method=GET
+            - Method=POST
           filters:
             - name: ClientRegistrySetToken
               args:
@@ -39,7 +39,7 @@ spring:
           uri: http://localhost:8080
           predicates:
             - Path=/api/public/data-factory/**
-            - Method=GET
+            - Method=GET,POST
           filters:
             - name: PublicApiAddToken
               args:
