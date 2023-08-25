@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: remove-token-from-public-sc-filter
+  namespace: {{ .Release.Namespace }}
+spec:
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.lua
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            inlineCode: |
+              function envoy_on_request(request_handle)
+                local path = request_handle:headers():get(":path")
+                if path:match("/api/public/data%-factory/.+") then
+                  request_handle:headers():remove("X-Access-Token")
+                end
+              end
+  workloadSelector:
+    labels:
+      app: platform-gateway
