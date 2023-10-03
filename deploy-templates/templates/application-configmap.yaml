@@ -18,7 +18,7 @@ data:
               uri: http://no-op
               predicates:
                 - Path=/data-factory/{registry}/**
-                - Method=POST
+                - Method=GET,POST
               filters:
                 - name: ClientRegistrySetToken
                   args:
